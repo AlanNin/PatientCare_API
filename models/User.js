@@ -24,6 +24,18 @@ const UserSchema = new mongoose.Schema(
       default: "user",
       required: true,
     },
+    appointments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Appointment",
+      },
+    ],
+    patients: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Patient",
+      },
+    ],
   },
   { timestamps: true }
 );
