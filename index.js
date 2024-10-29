@@ -2,6 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./db.js";
 import authRoutes from "./routes/auths.js";
+import patientRoutes from "./routes/patients.js";
+import appointmentRoutes from "./routes/appointments.js";
 import { errorHandler } from "./middlewares/errror-handler.js";
 
 dotenv.config();
@@ -9,6 +11,8 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/patient", patientRoutes);
+app.use("/api/appointment", appointmentRoutes);
 
 app.use((err, req, res, next) => {
   errorHandler(err, req, res, next);

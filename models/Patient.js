@@ -6,10 +6,11 @@ const PatientSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    photo_url: {
+      type: String,
+    },
     email: {
       type: String,
-      required: true,
-      unique: true,
     },
     phone: {
       type: String,
@@ -17,12 +18,33 @@ const PatientSchema = new mongoose.Schema(
     address: {
       type: String,
     },
-    dateOfBirth: {
+    date_of_birth: {
       type: Date,
     },
     gender: {
       type: String,
       enum: ["male", "female", "other"],
+    },
+    age: {
+      type: Number,
+    },
+    insurance: {
+      type: String,
+    },
+    marital_status: {
+      type: String,
+    },
+    blood_group: {
+      type: String,
+    },
+    height: {
+      type: Number,
+    },
+    weight: {
+      type: Number,
+    },
+    doctor_notes: {
+      type: String,
     },
   },
   { timestamps: true }
