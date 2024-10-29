@@ -35,6 +35,81 @@ export async function createAppointment(req, res, next) {
   }
 }
 
+export async function updateAppointment(req, res, next) {
+  try {
+    const { id } = req.params;
+    const { date_time, patient_id, reason, status } = req.body;
+    const user_id = req.user.id;
+
+    if (!id || !user_id) {
+      return next(createError(400, "Missing required fields"));
+    }
+
+    const user = await User.findById(user_id);
+
+    if (!user) {
+      return next(createError(400, "User not found"));
+    }
+
+    const appointment = await Appointment.findById(id);
+    if (!appointment) {
+      return next(createError(400, "Invalid appointment id"));
+    }
+
+    if (user.appointments.indexOf(id) === -1) {
+      return next(createError(400, "Invalid user id"));
+    }
+
+    const updateData = {};
+    if (date_time) updateData.date_time = date_time;
+    if (patient_id) updateData.patient_id = patient_id;
+    if (reason) updateData.reason = reason;
+    if (status) updateData.status = status;
+
+    await Appointment.findByIdAndUpdate(id, updateData);
+
+    res.status(200).json({
+      message: "Appointment updated successfully",
+    });
+  } catch (error) {
+    return next(createError(500, "Internal server error"));
+  }
+}
+
+export async function deleteAppointment(req, res, next) {
+  try {
+    const { id } = req.params;
+    const user_id = req.user.id;
+
+    if (!id || !user_id) {
+      return next(createError(400, "Missing required fields"));
+    }
+
+    const user = await User.findById(user_id);
+
+    if (!user) {
+      return next(createError(400, "User not found"));
+    }
+
+    const appointment = await Appointment.findById(id);
+    if (!appointment) {
+      return next(createError(400, "Invalid appointment id"));
+    }
+
+    if (user.appointments.indexOf(id) === -1) {
+      return next(createError(400, "Invalid user id"));
+    }
+
+    await Appointment.findByIdAndDelete(id);
+
+    res.status(200).json({
+      message: "Appointment deleted successfully",
+    });
+  } catch (error) {
+    return next(createError(500, "Internal server error"));
+  }
+}
+
 export async function getUserAppointments(req, res, next) {
   try {
     const user_id = req.user.id;
