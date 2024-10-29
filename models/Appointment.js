@@ -18,6 +18,11 @@ const AppointmentSchema = new mongoose.Schema({
     enum: ["waiting", "confirmed", "completed", "canceled"],
     default: "waiting",
   },
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
 export default mongoose.model("Appointment", AppointmentSchema);

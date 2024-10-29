@@ -46,6 +46,17 @@ const PatientSchema = new mongoose.Schema(
     doctor_notes: {
       type: String,
     },
+    appointments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Appointment",
+      },
+    ],
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );

@@ -1,5 +1,6 @@
 import Appointment from "../models/Appointment.js";
 import User from "../models/User.js";
+import Patient from "../models/Patient.js";
 import createError from "../utils/create-error.js";
 
 export async function createAppointment(req, res, next) {
@@ -17,12 +18,19 @@ export async function createAppointment(req, res, next) {
       patient_id,
       reason,
       status,
+      user_id,
     });
 
     await newAppointment.save();
 
     await User.findByIdAndUpdate(
       user_id,
+      { $push: { appointments: newAppointment._id } },
+      { new: true }
+    );
+
+    await Patient.findByIdAndUpdate(
+      patient_id,
       { $push: { appointments: newAppointment._id } },
       { new: true }
     );
@@ -45,18 +53,12 @@ export async function updateAppointment(req, res, next) {
       return next(createError(400, "Missing required fields"));
     }
 
-    const user = await User.findById(user_id);
-
-    if (!user) {
-      return next(createError(400, "User not found"));
-    }
-
     const appointment = await Appointment.findById(id);
     if (!appointment) {
       return next(createError(400, "Invalid appointment id"));
     }
 
-    if (user.appointments.indexOf(id) === -1) {
+    if (appointment.user_id.toString() !== user_id) {
       return next(createError(400, "Invalid user id"));
     }
 
@@ -85,20 +87,27 @@ export async function deleteAppointment(req, res, next) {
       return next(createError(400, "Missing required fields"));
     }
 
-    const user = await User.findById(user_id);
-
-    if (!user) {
-      return next(createError(400, "User not found"));
-    }
-
     const appointment = await Appointment.findById(id);
+
     if (!appointment) {
       return next(createError(400, "Invalid appointment id"));
     }
 
-    if (user.appointments.indexOf(id) === -1) {
+    if (appointment.user_id.toString() !== user_id) {
       return next(createError(400, "Invalid user id"));
     }
+
+    await User.findByIdAndUpdate(
+      user_id,
+      { $pull: { appointments: id } },
+      { new: true }
+    );
+
+    await Patient.findByIdAndUpdate(
+      appointment.patient_id,
+      { $pull: { appointments: id } },
+      { new: true }
+    );
 
     await Appointment.findByIdAndDelete(id);
 

@@ -40,6 +40,7 @@ export async function createPatient(req, res, next) {
       symptoms,
       medical_history,
       doctor_notes,
+      user_id,
     });
 
     await newPatient.save();
