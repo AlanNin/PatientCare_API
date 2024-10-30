@@ -73,11 +73,24 @@ export async function getUserPatients(req, res, next) {
       return next(createError(400, "Invalid user id"));
     }
 
-    const patients = await Patient.find({ _id: { $in: user.patients } });
+    const patients = await Patient.find({
+      _id: { $in: user.patients },
+    }).populate("appointments");
+
+    const patientsWithNextAppointment = patients.map((patient) => {
+      const nextAppointment = patient.appointments
+        .filter((appointment) => new Date(appointment.date_time) >= new Date())
+        .sort((a, b) => new Date(a.date_time) - new Date(b.date_time))[0];
+
+      return {
+        ...patient.toObject(),
+        next_appointment: nextAppointment || null,
+      };
+    });
 
     res.status(200).json({
       message: "Patients retrieved successfully",
-      data: patients || [],
+      data: patientsWithNextAppointment,
     });
   } catch (error) {
     return next(createError(500, "Internal server error"));
