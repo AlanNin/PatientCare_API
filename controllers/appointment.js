@@ -145,3 +145,44 @@ export async function getUserAppointments(req, res, next) {
     return next(createError(500, "Internal server error"));
   }
 }
+
+export async function getPatientAppointments(req, res, next) {
+  try {
+    const { id } = req.params;
+    const user_id = req.user.id;
+
+    if (!id || !user_id) {
+      return next(createError(400, "Missing required fields"));
+    }
+
+    const patient = await Patient.findById(id);
+
+    if (!patient) {
+      return next(createError(400, "Invalid patient id"));
+    }
+
+    if (patient.user_id.toString() !== user_id) {
+      return next(createError(400, "Invalid user id"));
+    }
+
+    // const today = new Date();
+
+    // const appointments = await Appointment.find({
+    //   patient_id: id,
+    //   date_time: { $lte: today },
+    //   status: { $nin: ["completed", "canceled"] },
+    // }).populate("patient_id");
+
+    const appointments = await Appointment.find({
+      patient_id: id,
+    }).populate("patient_id");
+
+    res.status(200).json({
+      message: "Appointments retrieved successfully",
+      data: appointments || [],
+    });
+  } catch (error) {
+    console.log(error);
+    return next(createError(500, "Internal server error"));
+  }
+}

@@ -36,6 +36,12 @@ const UserSchema = new mongoose.Schema(
         ref: "Patient",
       },
     ],
+    consultations: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Consultation",
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -96,6 +96,12 @@ const PatientSchema = new mongoose.Schema(
         ref: "Appointment",
       },
     ],
+    consultations: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Consultation",
+      },
+    ],
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

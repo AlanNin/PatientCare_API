@@ -1,3 +1,5 @@
+import Consultation from "../models/Consultation.js";
+import Appointment from "../models/Appointment.js";
 import Patient from "../models/Patient.js";
 import User from "../models/User.js";
 import createError from "../utils/create-error.js";
@@ -143,6 +145,14 @@ export async function deletePatient(req, res, next) {
       { $pull: { patients: id } },
       { new: true }
     );
+
+    await Appointment.deleteMany({
+      patient_id: id,
+    });
+
+    await Consultation.deleteMany({
+      patient_id: id,
+    });
 
     await Patient.findByIdAndDelete(id);
 
