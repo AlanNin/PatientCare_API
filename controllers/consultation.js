@@ -13,6 +13,7 @@ export async function createConsultation(req, res, next) {
       laboratory_studies,
       images_studies,
       treatment,
+      gynecological_information,
       patient_id,
       appointment_id,
     } = req.body;
@@ -37,6 +38,7 @@ export async function createConsultation(req, res, next) {
       laboratory_studies,
       images_studies,
       treatment,
+      gynecological_information,
       patient_id,
       user_id,
       appointment_id,
@@ -119,6 +121,7 @@ export async function updateConsultation(req, res, next) {
       laboratory_studies,
       images_studies,
       treatment,
+      gynecological_information,
       patient_id,
       appointment_id,
     } = req.body;
@@ -144,10 +147,26 @@ export async function updateConsultation(req, res, next) {
     if (laboratory_studies) updateData.laboratory_studies = laboratory_studies;
     if (images_studies) updateData.images_studies = images_studies;
     if (treatment) updateData.treatment = treatment;
+    if (gynecological_information)
+      updateData.gynecological_information = gynecological_information;
     if (patient_id) updateData.patient_id = patient_id;
     if (appointment_id) updateData.appointment_id = appointment_id;
 
     await Consultation.findByIdAndUpdate(id, updateData);
+
+    if (patient_id && patient_id !== consultation.patient_id.toString()) {
+      await Patient.findByIdAndUpdate(
+        consultation.patient_id,
+        { $pull: { consultations: id } },
+        { new: true }
+      );
+
+      await Patient.findByIdAndUpdate(
+        patient_id,
+        { $push: { consultations: id } },
+        { new: true }
+      );
+    }
 
     res.status(200).json({
       message: "Consultation updated successfully",
@@ -175,7 +194,9 @@ export async function getUserConsultations(req, res, next) {
 
     const consultations = await Consultation.find({
       _id: { $in: user.consultations },
-    }).populate("patient_id");
+    })
+      .populate("patient_id")
+      .populate("user_id");
 
     res.status(200).json({
       message: "Consultations retrieved successfully",

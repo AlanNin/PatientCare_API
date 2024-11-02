@@ -34,6 +34,14 @@ const ConsultationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    gynecological_information: {
+      last_menstrual_period: {
+        type: Date,
+      },
+      estimated_due_date: {
+        type: Date,
+      },
+    },
     patient_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Patient",

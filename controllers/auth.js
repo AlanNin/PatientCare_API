@@ -86,3 +86,27 @@ export async function signIn(req, res, next) {
     return next(createError(500, "Internal server error"));
   }
 }
+
+export async function verifySession(req, res, next) {
+  try {
+    const user_id = req.user.id;
+
+    const user = await User.findById(user_id).select("-password");
+
+    if (!user) {
+      return next(createError(401, "User not found"));
+    }
+
+    const newToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+
+    res.status(200).json({
+      message: "Session verified successfully",
+      data: {
+        user,
+        token: newToken,
+      },
+    });
+  } catch (error) {
+    return next(createError(500, "Error verifying session"));
+  }
+}

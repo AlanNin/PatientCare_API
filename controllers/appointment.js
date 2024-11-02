@@ -70,6 +70,20 @@ export async function updateAppointment(req, res, next) {
 
     await Appointment.findByIdAndUpdate(id, updateData);
 
+    if (patient_id && patient_id !== appointment.patient_id.toString()) {
+      await Patient.findByIdAndUpdate(
+        appointment.patient_id,
+        { $pull: { appointments: id } },
+        { new: true }
+      );
+
+      await Patient.findByIdAndUpdate(
+        patient_id,
+        { $push: { appointments: id } },
+        { new: true }
+      );
+    }
+
     res.status(200).json({
       message: "Appointment updated successfully",
     });

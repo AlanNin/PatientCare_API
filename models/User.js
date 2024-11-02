@@ -15,14 +15,35 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    img: {
+    photo_url: {
       type: String,
+    },
+    phone: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
     },
     role: {
       type: String,
-      enum: ["administrator", "user"],
+      enum: ["administrator", "user", "privileged"],
       default: "user",
       required: true,
+    },
+    subscription: {
+      type: {
+        type: String,
+        enum: ["single-purchase", "active", "inactive"],
+        default: "inactive",
+        required: true,
+      },
+      due_date: {
+        type: Date,
+      },
     },
     appointments: [
       {

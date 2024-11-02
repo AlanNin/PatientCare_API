@@ -26,7 +26,7 @@ export async function createPatient(req, res, next) {
 
     const user_id = req.user.id;
 
-    if (!name || !user_id) {
+    if (!name || !gender || !user_id) {
       return next(createError(400, "Missing required fields"));
     }
 
@@ -180,7 +180,9 @@ export async function getUserPatients(req, res, next) {
 
     const patients = await Patient.find({
       _id: { $in: user.patients },
-    }).populate("appointments");
+    })
+      .populate("appointments")
+      .populate("consultations");
 
     const patientsWithNextAppointment = patients.map((patient) => {
       const nextAppointment = patient.appointments
