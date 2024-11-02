@@ -11,9 +11,12 @@ export async function updateUser(req, res, next) {
     const {
       name,
       photo_url,
+      work_logo_url,
       email,
-      phone,
-      address,
+      personal_phone,
+      work_phone,
+      speciality,
+      work_address,
       gender,
       old_password,
       new_password,
@@ -68,9 +71,12 @@ export async function updateUser(req, res, next) {
 
     if (name) updateData.name = name;
     if (photo_url) updateData.photo_url = photo_url;
+    if (work_logo_url) updateData.work_logo_url = work_logo_url;
     if (email) updateData.email = email;
-    if (phone) updateData.phone = phone;
-    if (address) updateData.address = address;
+    if (personal_phone) updateData.personal_phone = personal_phone;
+    if (work_phone) updateData.work_phone = work_phone;
+    if (speciality) updateData.speciality = speciality;
+    if (work_address) updateData.work_address = work_address;
     if (gender) updateData.gender = gender;
     if (newPassword) updateData.password = newPassword;
 

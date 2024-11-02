@@ -18,10 +18,19 @@ const UserSchema = new mongoose.Schema(
     photo_url: {
       type: String,
     },
-    phone: {
+    work_logo_url: {
       type: String,
     },
-    address: {
+    personal_phone: {
+      type: String,
+    },
+    work_phone: {
+      type: String,
+    },
+    speciality: {
+      type: String,
+    },
+    work_address: {
       type: String,
     },
     gender: {
