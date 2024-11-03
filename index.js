@@ -19,6 +19,11 @@ const corsOptions = {
 const app = express();
 app.use(cors(corsOptions));
 app.use(express.json());
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Patient Care API",
+  });
+});
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/patient", patientRoutes);
