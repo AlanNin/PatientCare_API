@@ -62,13 +62,12 @@ export async function updateAppointment(req, res, next) {
       return next(createError(400, "Invalid user id"));
     }
 
-    const updateData = {};
-    if (date_time) updateData.date_time = date_time;
-    if (patient_id) updateData.patient_id = patient_id;
-    if (reason) updateData.reason = reason;
-    if (status) updateData.status = status;
-
-    await Appointment.findByIdAndUpdate(id, updateData);
+    await Appointment.findByIdAndUpdate(id, {
+      date_time,
+      patient_id,
+      reason,
+      status,
+    });
 
     if (patient_id && patient_id !== appointment.patient_id.toString()) {
       await Patient.findByIdAndUpdate(

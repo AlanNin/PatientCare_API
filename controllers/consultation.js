@@ -140,19 +140,17 @@ export async function updateConsultation(req, res, next) {
       return next(createError(400, "Invalid user id"));
     }
 
-    const updateData = {};
-    if (reason) updateData.reason = reason;
-    if (symptoms) updateData.symptoms = symptoms;
-    if (diagnosis) updateData.diagnosis = diagnosis;
-    if (laboratory_studies) updateData.laboratory_studies = laboratory_studies;
-    if (images_studies) updateData.images_studies = images_studies;
-    if (treatment) updateData.treatment = treatment;
-    if (gynecological_information)
-      updateData.gynecological_information = gynecological_information;
-    if (patient_id) updateData.patient_id = patient_id;
-    if (appointment_id) updateData.appointment_id = appointment_id;
-
-    await Consultation.findByIdAndUpdate(id, updateData);
+    await Consultation.findByIdAndUpdate(id, {
+      reason,
+      symptoms,
+      diagnosis,
+      laboratory_studies,
+      images_studies,
+      treatment,
+      gynecological_information,
+      patient_id,
+      appointment_id,
+    });
 
     if (patient_id && patient_id !== consultation.patient_id.toString()) {
       await Patient.findByIdAndUpdate(

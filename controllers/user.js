@@ -67,20 +67,18 @@ export async function updateUser(req, res, next) {
       newPassword = bcrypt.hashSync(new_password, salt);
     }
 
-    const updateData = {};
-
-    if (name) updateData.name = name;
-    if (photo_url) updateData.photo_url = photo_url;
-    if (work_logo_url) updateData.work_logo_url = work_logo_url;
-    if (email) updateData.email = email;
-    if (personal_phone) updateData.personal_phone = personal_phone;
-    if (work_phone) updateData.work_phone = work_phone;
-    if (speciality) updateData.speciality = speciality;
-    if (work_address) updateData.work_address = work_address;
-    if (gender) updateData.gender = gender;
-    if (newPassword) updateData.password = newPassword;
-
-    await User.findByIdAndUpdate(user_id, updateData);
+    await User.findByIdAndUpdate(user_id, {
+      name,
+      photo_url,
+      work_logo_url,
+      email,
+      personal_phone,
+      work_phone,
+      speciality,
+      work_address,
+      gender,
+      password: newPassword,
+    });
 
     res.status(200).json({
       message: "User updated successfully",
@@ -121,6 +119,35 @@ export async function deleteUser(req, res, next) {
 
     res.status(200).json({
       message: "User deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return next(createError(500, "Internal server error"));
+  }
+}
+
+export async function deleteUserField(req, res, next) {
+  try {
+    const user_id = req.user.id;
+    const { field } = req.body;
+
+    if (!user_id || !field) {
+      return next(createError(400, "Missing required fields"));
+    }
+
+    const user = await User.findById(user_id);
+    if (!user) {
+      return next(createError(404, "User not found"));
+    }
+
+    if (!(field in user)) {
+      return next(createError(400, "Field not found in user profile"));
+    }
+
+    await User.findByIdAndUpdate(user_id, { $unset: { [field]: "" } });
+
+    res.status(200).json({
+      message: `Field '${field}' deleted successfully from user profile`,
     });
   } catch (error) {
     console.log(error);
