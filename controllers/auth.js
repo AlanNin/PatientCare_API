@@ -70,6 +70,13 @@ export async function signIn(req, res, next) {
     if (!is_password_valid) {
       return next(createError(400, "Invalid email or password"));
     }
+    if (
+      user.subscription.type === "inactive" &&
+      user.role !== "administrator" &&
+      user.role !== "privileged"
+    ) {
+      return next(createError(400, "Supscription inactive"));
+    }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
