@@ -77,7 +77,7 @@ export async function updateUser(req, res, next) {
       speciality,
       work_address,
       gender,
-      password: newPassword,
+      password: newPassword ?? user.password,
     });
 
     res.status(200).json({
