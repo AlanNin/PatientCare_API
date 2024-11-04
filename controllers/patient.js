@@ -26,7 +26,7 @@ export async function createPatient(req, res, next) {
 
     const user_id = req.user.id;
 
-    if (!name || !gender || !user_id) {
+    if (!name || !user_id) {
       return next(createError(400, "Missing required fields"));
     }
 
