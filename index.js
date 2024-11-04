@@ -24,6 +24,11 @@ app.get("/", (req, res) => {
     message: "Patient Care API",
   });
 });
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+  });
+});
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/patient", patientRoutes);
