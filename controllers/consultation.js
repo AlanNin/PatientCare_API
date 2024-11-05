@@ -53,7 +53,7 @@ export async function createConsultation(req, res, next) {
     );
 
     await Patient.findByIdAndUpdate(
-      user_id,
+      patient_id,
       { $push: { consultations: newConsultation._id } },
       { new: true }
     );
