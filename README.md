@@ -1,7 +1,5 @@
 # PatientCare API
 
-![PatientCare Logo](./public/icon.png)
-
 **PatientCare API** es una API RESTful construida con Node.js y Express que permite a los médicos gestionar sus pacientes, citas y consultas de manera eficiente. Esta API proporciona endpoints para realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) en los registros de pacientes, citas y consultas.
 
 ## Características
@@ -41,8 +39,8 @@
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/tuusuario/patientcare-api.git
-   cd patientcare-api
+   git clone https://github.com/AlanNin/PatientCare_API
+   cd patientcare_api
    ```
 
 ## Contact
