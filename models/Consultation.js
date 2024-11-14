@@ -41,6 +41,9 @@ const ConsultationSchema = new mongoose.Schema(
       estimated_due_date: {
         type: Date,
       },
+      gestational_age: {
+        type: Number,
+      },
     },
     patient_id: {
       type: mongoose.Schema.Types.ObjectId,
