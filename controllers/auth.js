@@ -5,6 +5,18 @@ import jwt from "jsonwebtoken";
 import lowercaseString from "../utils/lowercase-string.js";
 import validatePassword from "../utils/validate-password.js";
 
+export async function Test(req, res, next) {
+  try {
+    res.status(201).json({
+      message: "User created successfully",
+    });
+  } catch (error) {
+    res.status(404).json({
+      message: "Error",
+    });
+  }
+}
+
 export async function signUp(req, res, next) {
   try {
     const { name, email, password, confirm_password } = req.body;
