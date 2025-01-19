@@ -4,6 +4,12 @@ import verifyToken from "../utils/verify-token.js";
 
 const router = express.Router();
 
+app.get("/test", (req, res) => {
+  res.status(200).json({
+    message: "its working",
+  });
+});
+
 router.post("/sign-up", signUp);
 
 router.post("/sign-in", signIn);
