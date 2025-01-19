@@ -17,18 +17,42 @@ const corsOptions = {
 };
 
 const app = express();
+
+// Initialize database connection before setting up routes
+let dbConnection = null;
+const initializeDB = async () => {
+  if (!dbConnection) {
+    dbConnection = await connectDB();
+  }
+  return dbConnection;
+};
+
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// Middleware to ensure DB connection
+app.use(async (req, res, next) => {
+  try {
+    await initializeDB();
+    next();
+  } catch (error) {
+    console.error("Failed to connect to database:", error);
+    res.status(500).json({ error: "Database connection failed" });
+  }
+});
+
 app.get("/", (req, res) => {
   res.status(200).json({
     message: "Patient Care API",
   });
 });
+
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     status: "ok",
   });
 });
+
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/patient", patientRoutes);
@@ -41,7 +65,12 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  connectDB();
-  console.log("Server initialized successfully");
-});
+// Only start the server if we're not in a serverless environment
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, async () => {
+    await initializeDB();
+    console.log("Server initialized successfully");
+  });
+}
+
+export default app;
