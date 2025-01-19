@@ -18,7 +18,6 @@ const corsOptions = {
 
 const app = express();
 
-// Initialize database connection before setting up routes
 let dbConnection = null;
 const initializeDB = async () => {
   if (!dbConnection) {
@@ -30,7 +29,6 @@ const initializeDB = async () => {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Middleware to ensure DB connection
 app.use(async (req, res, next) => {
   try {
     await initializeDB();
