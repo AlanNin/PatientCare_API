@@ -10,6 +10,24 @@ router.get("/test", (req, res) => {
   });
 });
 
+router.post("/test-post", (req, res) => {
+  res.status(200).json({
+    message: "its working",
+  });
+});
+
+router.put("/test-put", (req, res) => {
+  res.status(200).json({
+    message: "its working",
+  });
+});
+
+router.delete("/test-delete", (req, res) => {
+  res.status(200).json({
+    message: "its working",
+  });
+});
+
 router.post("/sign-up", signUp);
 
 router.post("/sign-in", signIn);
