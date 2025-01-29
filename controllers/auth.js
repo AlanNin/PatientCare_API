@@ -13,7 +13,7 @@ export async function signUp(req, res, next) {
       return next(createError(400, "Missing required fields"));
     }
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: lowercaseString(email) });
 
     if (existingUser) {
       return next(createError(400, "Email not available"));
@@ -59,7 +59,7 @@ export async function signIn(req, res, next) {
       return next(createError(400, "Missing required fields"));
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: lowercaseString(email) });
 
     if (!user) {
       return next(createError(400, "Invalid email or password"));
