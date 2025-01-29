@@ -14,6 +14,11 @@ const ConsultationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      enum: ["obstetric", "gynecological"],
+      required: true,
+    },
     laboratory_studies: {
       description: {
         type: String,
@@ -34,6 +39,26 @@ const ConsultationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    obstetric_information: {
+      blood_pressure: {
+        type: Number,
+      },
+      weight: {
+        type: Number,
+      },
+      fundal_height: {
+        type: Number,
+      },
+      fcf_mfa: {
+        type: Number,
+      },
+      edema: {
+        type: Boolean,
+      },
+      varices: {
+        type: Boolean,
+      },
+    },
     gynecological_information: {
       last_menstrual_period: {
         type: Date,
@@ -44,6 +69,9 @@ const ConsultationSchema = new mongoose.Schema(
       gestational_age: {
         type: Number,
       },
+    },
+    notes: {
+      type: String,
     },
     patient_id: {
       type: mongoose.Schema.Types.ObjectId,

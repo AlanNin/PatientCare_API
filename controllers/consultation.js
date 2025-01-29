@@ -7,6 +7,7 @@ import createError from "../utils/create-error.js";
 export async function createConsultation(req, res, next) {
   try {
     const {
+      type,
       reason,
       symptoms,
       diagnosis,
@@ -14,6 +15,8 @@ export async function createConsultation(req, res, next) {
       images_studies,
       treatment,
       gynecological_information,
+      obstetric_information,
+      notes,
       patient_id,
       appointment_id,
     } = req.body;
@@ -32,6 +35,7 @@ export async function createConsultation(req, res, next) {
     }
 
     const newConsultation = new Consultation({
+      type,
       reason,
       symptoms,
       diagnosis,
@@ -39,6 +43,8 @@ export async function createConsultation(req, res, next) {
       images_studies,
       treatment,
       gynecological_information,
+      obstetric_information,
+      notes,
       patient_id,
       user_id,
       appointment_id,
@@ -66,6 +72,7 @@ export async function createConsultation(req, res, next) {
       message: "Consultation created successfully",
     });
   } catch (error) {
+    console.log(error);
     return next(createError(500, "Internal server error"));
   }
 }
@@ -115,6 +122,7 @@ export async function updateConsultation(req, res, next) {
   try {
     const { id } = req.params;
     const {
+      type,
       reason,
       symptoms,
       diagnosis,
@@ -122,6 +130,8 @@ export async function updateConsultation(req, res, next) {
       images_studies,
       treatment,
       gynecological_information,
+      obstetric_information,
+      notes,
       patient_id,
       appointment_id,
     } = req.body;
@@ -141,6 +151,7 @@ export async function updateConsultation(req, res, next) {
     }
 
     await Consultation.findByIdAndUpdate(id, {
+      type,
       reason,
       symptoms,
       diagnosis,
@@ -148,6 +159,8 @@ export async function updateConsultation(req, res, next) {
       images_studies,
       treatment,
       gynecological_information,
+      obstetric_information,
+      notes,
       patient_id,
       appointment_id,
     });

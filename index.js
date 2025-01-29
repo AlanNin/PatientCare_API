@@ -67,7 +67,7 @@ const PORT = process.env.PORT || 3000;
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, async () => {
     await initializeDB();
-    console.log("Server initialized successfully");
+    console.log("Server initialized successfully on port", PORT);
   });
 }
 
