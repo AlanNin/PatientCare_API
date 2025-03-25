@@ -1,5 +1,9 @@
 import express from 'express';
-import { handleWebhook, simulateWebhook } from '../controllers/paypal.js';
+import {
+  handleWebhook,
+  simulateWebhook,
+  validatePaymentRoute,
+} from '../controllers/payment.js';
 
 const router = express.Router();
 
@@ -10,5 +14,7 @@ router.post(
 );
 
 router.post('/simulate', simulateWebhook);
+
+router.get('/validate-token', validatePaymentRoute);
 
 export default router;
