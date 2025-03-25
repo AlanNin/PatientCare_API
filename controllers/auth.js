@@ -108,6 +108,14 @@ export async function signIn(req, res, next) {
     if (!is_password_valid) {
       return next(createError(400, 'Invalid email or password'));
     }
+
+    if (!user.email_verified) {
+      return res.status(400).json({
+        status: 400,
+        message: 'Email not verified',
+      });
+    }
+
     if (
       !user.subscription.type ||
       (user.subscription.type === 'inactive' &&
@@ -124,13 +132,6 @@ export async function signIn(req, res, next) {
         status: 400,
         message: 'Subscription inactive',
         subscription_data,
-      });
-    }
-
-    if (!user.email_verified) {
-      return res.status(400).json({
-        status: 400,
-        message: 'Email not verified',
       });
     }
 
