@@ -1,8 +1,8 @@
-import Appointment from "../models/Appointment.js";
-import Consultation from "../models/Consultation.js";
-import Patient from "../models/Patient.js";
-import User from "../models/User.js";
-import createError from "../utils/create-error.js";
+import Appointment from '../models/Appointment.js';
+import Consultation from '../models/Consultation.js';
+import Patient from '../models/Patient.js';
+import User from '../models/User.js';
+import createError from '../utils/create-error.js';
 
 export async function createConsultation(req, res, next) {
   try {
@@ -31,7 +31,7 @@ export async function createConsultation(req, res, next) {
       !patient_id ||
       !user_id
     ) {
-      return next(createError(400, "Missing required fields"));
+      return next(createError(400, 'Missing required fields'));
     }
 
     const newConsultation = new Consultation({
@@ -65,15 +65,14 @@ export async function createConsultation(req, res, next) {
     );
 
     await Appointment.findByIdAndUpdate(appointment_id, {
-      status: "completed",
+      status: 'completed',
     });
 
     res.status(201).json({
-      message: "Consultation created successfully",
+      message: 'Consultation created successfully',
     });
   } catch (error) {
-    console.log(error);
-    return next(createError(500, "Internal server error"));
+    return next(createError(500, 'Internal server error'));
   }
 }
 
@@ -83,17 +82,17 @@ export async function deleteConsultation(req, res, next) {
     const user_id = req.user.id;
 
     if (!id || !user_id) {
-      return next(createError(400, "Missing required fields"));
+      return next(createError(400, 'Missing required fields'));
     }
 
     const consultation = await Consultation.findById(id);
 
     if (!consultation) {
-      return next(createError(400, "Invalid consultation id"));
+      return next(createError(400, 'Invalid consultation id'));
     }
 
     if (consultation.user_id.toString() !== user_id) {
-      return next(createError(400, "Invalid user id"));
+      return next(createError(400, 'Invalid user id'));
     }
 
     await User.findByIdAndUpdate(
@@ -111,10 +110,10 @@ export async function deleteConsultation(req, res, next) {
     await Consultation.findByIdAndDelete(id);
 
     res.status(200).json({
-      message: "Consultation deleted successfully",
+      message: 'Consultation deleted successfully',
     });
   } catch (error) {
-    return next(createError(500, "Internal server error"));
+    return next(createError(500, 'Internal server error'));
   }
 }
 
@@ -138,16 +137,16 @@ export async function updateConsultation(req, res, next) {
     const user_id = req.user.id;
 
     if (!id || !user_id) {
-      return next(createError(400, "Missing required fields"));
+      return next(createError(400, 'Missing required fields'));
     }
 
     const consultation = await Consultation.findById(id);
     if (!consultation) {
-      return next(createError(400, "Invalid consultation id"));
+      return next(createError(400, 'Invalid consultation id'));
     }
 
     if (consultation.user_id.toString() !== user_id) {
-      return next(createError(400, "Invalid user id"));
+      return next(createError(400, 'Invalid user id'));
     }
 
     await Consultation.findByIdAndUpdate(id, {
@@ -180,12 +179,10 @@ export async function updateConsultation(req, res, next) {
     }
 
     res.status(200).json({
-      message: "Consultation updated successfully",
+      message: 'Consultation updated successfully',
     });
   } catch (error) {
-    console.log(error);
-
-    return next(createError(500, "Internal server error"));
+    return next(createError(500, 'Internal server error'));
   }
 }
 
@@ -194,26 +191,26 @@ export async function getUserConsultations(req, res, next) {
     const user_id = req.user.id;
 
     if (!user_id) {
-      return next(createError(400, "Missing required fields"));
+      return next(createError(400, 'Missing required fields'));
     }
 
     const user = await User.findById(user_id);
 
     if (!user) {
-      return next(createError(400, "Invalid user id"));
+      return next(createError(400, 'Invalid user id'));
     }
 
     const consultations = await Consultation.find({
       _id: { $in: user.consultations },
     })
-      .populate("patient_id")
-      .populate("user_id");
+      .populate('patient_id')
+      .populate('user_id');
 
     res.status(200).json({
-      message: "Consultations retrieved successfully",
+      message: 'Consultations retrieved successfully',
       data: consultations || [],
     });
   } catch (error) {
-    return next(createError(500, "Internal server error"));
+    return next(createError(500, 'Internal server error'));
   }
 }

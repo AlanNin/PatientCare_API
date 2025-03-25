@@ -5,6 +5,9 @@ import {
   signUp,
   verifyEmail,
   verifySession,
+  recoverPassword,
+  verifyRecoverToken,
+  updatePassword,
 } from '../controllers/auth.js';
 import verifyToken from '../utils/verify-token.js';
 
@@ -19,5 +22,11 @@ router.get('/verify-session', verifyToken, verifySession);
 router.get('/verify-email', verifyEmail);
 
 router.post('/resend-email-verification', resendEmailVerification);
+
+router.post('/password-reset-email', recoverPassword);
+
+router.get('/verify-recover-token', verifyRecoverToken);
+
+router.post('/update-password', updatePassword);
 
 export default router;

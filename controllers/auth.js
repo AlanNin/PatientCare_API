@@ -6,7 +6,10 @@ import lowercaseString from '../utils/lowercase-string.js';
 import validatePassword from '../utils/validate-password.js';
 import { generateSubscription } from '../lib/paypal.js';
 import validateEmail from '../utils/validate-email.js';
-import { sendVerificationEmail } from '../lib/nodemailer.js';
+import {
+  sendPasswordResetEmail,
+  sendVerificationEmail,
+} from '../lib/nodemailer.js';
 
 export async function signUp(req, res, next) {
   try {
@@ -57,7 +60,6 @@ export async function signUp(req, res, next) {
         { expiresIn: '30m' }
       );
       await sendVerificationEmail(newUser.email, newUser.name, email_token);
-      console.log('Verification email sent successfully.');
     } catch (emailError) {
       console.error('Failed to send verification email:', emailError);
       await User.findByIdAndDelete(newUser._id);
@@ -254,6 +256,138 @@ export async function resendEmailVerification(req, res, next) {
       return next(createError(400, 'Token inválido.'));
     } else {
       return next(createError(500, 'Error interno del servidor.'));
+    }
+  }
+}
+
+export async function recoverPassword(req, res, next) {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return next(createError(400, 'Faltan campos requeridos.'));
+    }
+
+    const user = await User.findOne({ email: lowercaseString(email) });
+
+    if (!user) {
+      return next(createError(400, 'Usuario no encontrado.'));
+    }
+
+    const recover_token = jwt.sign(
+      { id: user._id },
+      process.env.RECOVER_JWT_SECRET,
+      { expiresIn: '30m' }
+    );
+
+    try {
+      await sendPasswordResetEmail(user.email, user.name, recover_token);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      return next(createError(500, 'Failed to send verification email'));
+    }
+
+    res.status(200).json({
+      message: 'Password reset email sent successfully.',
+    });
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return next(
+        createError(401, 'El token ha expirado. Por favor, solicita uno nuevo.')
+      );
+    } else if (error.name === 'JsonWebTokenError') {
+      return next(createError(400, 'Token inválido.'));
+    } else {
+      return next(createError(500, 'Error interno del servidor.'));
+    }
+  }
+}
+
+export async function verifyRecoverToken(req, res, next) {
+  try {
+    const { token } = req.query;
+
+    if (!token) {
+      return next(createError(400, 'Faltan campos requeridos.'));
+    }
+
+    const decoded = jwt.verify(token, process.env.RECOVER_JWT_SECRET);
+
+    if (!decoded.id) {
+      return next(createError(400, 'Token inválido.'));
+    }
+
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return next(createError(400, 'Usuario no encontrado.'));
+    }
+
+    res.status(200).json({
+      message: 'Password reset token verified successfully.',
+    });
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return next(
+        createError(401, 'El token ha expirado. Por favor, solicita uno nuevo.')
+      );
+    } else if (error.name === 'JsonWebTokenError') {
+      return next(createError(400, 'Token inválido.'));
+    } else {
+      return next(createError(500, 'Error interno del servidor.'));
+    }
+  }
+}
+
+export async function updatePassword(req, res, next) {
+  try {
+    const { token, password, confirm_password } = req.body;
+
+    if (!token || !password || !confirm_password) {
+      return next(createError(400, 'Missing required fields'));
+    }
+
+    const decoded = jwt.verify(token, process.env.RECOVER_JWT_SECRET);
+
+    if (!decoded.id) {
+      return next(createError(400, 'Invalid token'));
+    }
+
+    if (password !== confirm_password) {
+      return next(createError(400, 'Passwords do not match'));
+    }
+
+    if (!validatePassword(password)) {
+      return next(
+        createError(
+          400,
+          'Password must have at least 1 uppercase letter, 1 number, and be at least 8 characters long'
+        )
+      );
+    }
+
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return next(createError(400, 'User not found'));
+    }
+
+    const salt = bcrypt.genSaltSync(10);
+    const hashed_password = bcrypt.hashSync(password, salt);
+
+    user.password = hashed_password;
+    await user.save();
+
+    res.status(200).json({
+      message: 'Password reset successfully.',
+    });
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return next(createError(401, 'Token expired. Please request a new one.'));
+    } else if (error.name === 'JsonWebTokenError') {
+      return next(createError(400, 'Invalid token'));
+    } else {
+      return next(createError(500, 'Internal server error'));
     }
   }
 }
