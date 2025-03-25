@@ -53,6 +53,18 @@ export async function signUp(req, res, next) {
 
     await newUser.save();
 
+    let subscription_data = null;
+    try {
+      subscription_data = await generateSubscription(
+        newUser._id.toString(),
+        newUser.email,
+        newUser.name
+      );
+    } catch (error) {
+      await User.findByIdAndDelete(newUser._id);
+      return next(createError(500, 'Internal server error'));
+    }
+
     try {
       const email_token = jwt.sign(
         { id: newUser._id },
@@ -64,18 +76,6 @@ export async function signUp(req, res, next) {
       console.error('Failed to send verification email:', emailError);
       await User.findByIdAndDelete(newUser._id);
       return next(createError(500, 'Failed to send verification email'));
-    }
-
-    let subscription_data = null;
-    try {
-      subscription_data = await generateSubscription(
-        newUser._id.toString(),
-        newUser.email,
-        newUser.name
-      );
-    } catch (error) {
-      await User.findByIdAndDelete(newUser._id);
-      return next(createError(500, 'Internal server error'));
     }
 
     res.status(201).json({
