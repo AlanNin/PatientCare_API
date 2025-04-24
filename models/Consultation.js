@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const ConsultationSchema = new mongoose.Schema(
   {
@@ -16,7 +16,7 @@ const ConsultationSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["obstetric", "gynecological"],
+      enum: ['obstetric', 'gynecological'],
       required: true,
     },
     laboratory_studies: {
@@ -41,22 +41,22 @@ const ConsultationSchema = new mongoose.Schema(
     },
     obstetric_information: {
       blood_pressure: {
-        type: Number,
+        type: String,
       },
       weight: {
-        type: Number,
+        type: String,
       },
       fundal_height: {
-        type: Number,
+        type: String,
       },
       fcf_mfa: {
-        type: Number,
+        type: String,
       },
       edema: {
-        type: Boolean,
+        type: String,
       },
       varices: {
-        type: Boolean,
+        type: String,
       },
     },
     gynecological_information: {
@@ -75,20 +75,20 @@ const ConsultationSchema = new mongoose.Schema(
     },
     patient_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Patient",
+      ref: 'Patient',
       required: true,
     },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     appointment_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Appointment",
+      ref: 'Appointment',
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Consultation", ConsultationSchema);
+export default mongoose.model('Consultation', ConsultationSchema);

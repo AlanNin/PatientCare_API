@@ -77,6 +77,9 @@ export const handleWebhook = async (req, res) => {
     switch (webhook_event.event_type) {
       case 'BILLING.SUBSCRIPTION.ACTIVATED':
         try {
+          const expirationDate = new Date();
+          expirationDate.setMonth(expirationDate.getMonth() + 1);
+
           await User.updateOne(
             {
               subscription: { subscription_id: webhook_event.resource.id },
@@ -84,6 +87,7 @@ export const handleWebhook = async (req, res) => {
             {
               $set: {
                 'subscription.type': 'active',
+                'subscription.due_date': expirationDate,
               },
             }
           );
@@ -96,6 +100,9 @@ export const handleWebhook = async (req, res) => {
         break;
       case 'BILLING.SUBSCRIPTION.RENEWED':
         try {
+          const expirationDate = new Date();
+          expirationDate.setMonth(expirationDate.getMonth() + 1);
+
           await User.updateOne(
             {
               subscription: { subscription_id: webhook_event.resource.id },
@@ -103,6 +110,7 @@ export const handleWebhook = async (req, res) => {
             {
               $set: {
                 'subscription.type': 'active',
+                'subscription.due_date': expirationDate,
               },
             }
           );
@@ -122,6 +130,7 @@ export const handleWebhook = async (req, res) => {
             {
               $set: {
                 'subscription.type': 'inactive',
+                'subscription.due_date': null,
               },
             }
           );
@@ -141,6 +150,7 @@ export const handleWebhook = async (req, res) => {
             {
               $set: {
                 'subscription.type': 'inactive',
+                'subscription.due_date': null,
               },
             }
           );
@@ -160,6 +170,7 @@ export const handleWebhook = async (req, res) => {
             {
               $set: {
                 'subscription.type': 'inactive',
+                'subscription.due_date': null,
               },
             }
           );
