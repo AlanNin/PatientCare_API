@@ -1,10 +1,10 @@
-import User from '../models/User.js';
-import Apppointment from '../models/Appointment.js';
-import Consultation from '../models/Consultation.js';
-import Patient from '../models/Patient.js';
-import createError from '../utils/create-error.js';
-import validatePassword from '../utils/validate-password.js';
-import bcrypt from 'bcryptjs';
+import User from "../models/User.js";
+import Apppointment from "../models/Appointment.js";
+import Consultation from "../models/Consultation.js";
+import Patient from "../models/Patient.js";
+import createError from "../utils/create-error.js";
+import validatePassword from "../utils/validate-password.js";
+import bcrypt from "bcryptjs";
 
 export async function updateUser(req, res, next) {
   try {
@@ -26,20 +26,20 @@ export async function updateUser(req, res, next) {
     const user_id = req.user.id;
 
     if (!user_id) {
-      return next(createError(400, 'Missing required fields'));
+      return next(createError(400, "Missing required fields"));
     }
 
     const user = await User.findById(user_id);
 
     if (!user) {
-      return next(createError(404, 'User not found'));
+      return next(createError(404, "User not found"));
     }
 
     let newPassword = null;
 
     if (old_password || new_password || confirm_new_password) {
       if (!old_password || !new_password || !confirm_new_password) {
-        return next(createError(400, 'Missing required fields'));
+        return next(createError(400, "Missing required fields"));
       }
 
       const isOldPasswordCorrect = await bcrypt.compare(
@@ -47,18 +47,18 @@ export async function updateUser(req, res, next) {
         user.password
       );
       if (!isOldPasswordCorrect) {
-        return next(createError(400, 'Old password does not match'));
+        return next(createError(400, "Old password does not match"));
       }
 
       if (new_password !== confirm_new_password) {
-        return next(createError(400, 'Passwords do not match'));
+        return next(createError(400, "Passwords do not match"));
       }
 
       if (!validatePassword(new_password)) {
         return next(
           createError(
             400,
-            'Password must have at least 1 uppercase letter, 1 number, and be at least 8 characters long'
+            "Password must have at least 1 uppercase letter, 1 number, and be at least 8 characters long"
           )
         );
       }
@@ -80,11 +80,14 @@ export async function updateUser(req, res, next) {
       password: newPassword ?? user.password,
     });
 
+    const updatedUser = await User.findById(user_id);
+
     res.status(200).json({
-      message: 'User updated successfully',
+      message: "User updated successfully",
+      user: updatedUser,
     });
   } catch (error) {
-    return next(createError(500, 'Internal server error'));
+    return next(createError(500, "Internal server error"));
   }
 }
 
@@ -93,13 +96,13 @@ export async function deleteUser(req, res, next) {
     const user_id = req.user.id;
 
     if (!user_id) {
-      return next(createError(400, 'Missing required fields'));
+      return next(createError(400, "Missing required fields"));
     }
 
     const user = await User.findById(user_id);
 
     if (!user) {
-      return next(createError(404, 'User not found'));
+      return next(createError(404, "User not found"));
     }
 
     await Apppointment.deleteMany({
@@ -117,10 +120,10 @@ export async function deleteUser(req, res, next) {
     await User.findByIdAndDelete(user_id);
 
     res.status(200).json({
-      message: 'User deleted successfully',
+      message: "User deleted successfully",
     });
   } catch (error) {
-    return next(createError(500, 'Internal server error'));
+    return next(createError(500, "Internal server error"));
   }
 }
 
@@ -130,24 +133,24 @@ export async function deleteUserField(req, res, next) {
     const { field } = req.body;
 
     if (!user_id || !field) {
-      return next(createError(400, 'Missing required fields'));
+      return next(createError(400, "Missing required fields"));
     }
 
     const user = await User.findById(user_id);
     if (!user) {
-      return next(createError(404, 'User not found'));
+      return next(createError(404, "User not found"));
     }
 
     if (!(field in user)) {
-      return next(createError(400, 'Field not found in user profile'));
+      return next(createError(400, "Field not found in user profile"));
     }
 
-    await User.findByIdAndUpdate(user_id, { $unset: { [field]: '' } });
+    await User.findByIdAndUpdate(user_id, { $unset: { [field]: "" } });
 
     res.status(200).json({
       message: `Field '${field}' deleted successfully from user profile`,
     });
   } catch (error) {
-    return next(createError(500, 'Internal server error'));
+    return next(createError(500, "Internal server error"));
   }
 }
