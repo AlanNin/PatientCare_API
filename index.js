@@ -1,20 +1,20 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import { connectDB } from './db.js';
-import authRoutes from './routes/auths.js';
-import userRoutes from './routes/users.js';
-import patientRoutes from './routes/patients.js';
-import appointmentRoutes from './routes/appointments.js';
-import consultationRoutes from './routes/consultations.js';
-import paymentRoutes from './routes/payments.js';
-import { errorHandler } from './middlewares/error-handler.js';
-import cors from 'cors';
-import bodyParser from 'body-parser';
+import express from "express";
+import dotenv from "dotenv";
+import { connectDB } from "./db.js";
+import authRoutes from "./routes/auths.js";
+import userRoutes from "./routes/users.js";
+import patientRoutes from "./routes/patients.js";
+import appointmentRoutes from "./routes/appointments.js";
+import consultationRoutes from "./routes/consultations.js";
+import paymentRoutes from "./routes/payments.js";
+import { errorHandler } from "./middlewares/error-handler.js";
+import cors from "cors";
+import bodyParser from "body-parser";
 
 dotenv.config();
 const corsOptions = {
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  origin: "*",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 };
 const app = express();
@@ -37,29 +37,29 @@ app.use(async (req, res, next) => {
     await initializeDB();
     next();
   } catch (error) {
-    console.error('Failed to connect to database:', error);
-    res.status(500).json({ error: 'Database connection failed' });
+    console.error("Failed to connect to database:", error);
+    res.status(500).json({ error: "Database connection failed" });
   }
 });
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).json({
-    message: 'Patient Care API',
+    message: "Medelle API",
   });
 });
 
-app.get('/api/health', (req, res) => {
+app.get("/api/health", (req, res) => {
   res.status(200).json({
-    status: 'ok',
+    status: "ok",
   });
 });
 
-app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/patient', patientRoutes);
-app.use('/api/appointment', appointmentRoutes);
-app.use('/api/consultation', consultationRoutes);
-app.use('/api/payment', paymentRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/patient", patientRoutes);
+app.use("/api/appointment", appointmentRoutes);
+app.use("/api/consultation", consultationRoutes);
+app.use("/api/payment", paymentRoutes);
 
 app.use((err, req, res, next) => {
   errorHandler(err, req, res, next);
@@ -68,10 +68,10 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 
 // Only start the server if we're not in a serverless environment
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, async () => {
     await initializeDB();
-    console.log('Server initialized successfully on port', PORT);
+    console.log("Server initialized successfully on port", PORT);
   });
 }
 
